@@ -3,11 +3,7 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	DbHost     string `mapstructure:"SQL_HOST"`
-	DbUsername string `mapstructure:"SQL_USER"`
-	DbPassword string `mapstructure:"SQL_PASSWORD"`
-	DbPort     string `mapstructure:"SQL_PORT"`
-	DbName     string `mapstructure:"SQL_DB"`
+	DbConnection string `mapstructure:"DSN"`
 
 	RedisUrl string `mapstructure:"REDIS_URL"`
 }
