@@ -10,7 +10,7 @@ import (
 )
 
 func ConnectionDB(config *config.Config) *gorm.DB {
-	dsn := config.DbUsername + ":" + config.DbPassword + "@tcp(" + config.DbHost + ":" + config.DbPort + ")/" + config.DbName + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := config.DbConnection
 	client, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
