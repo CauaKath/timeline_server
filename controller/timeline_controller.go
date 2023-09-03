@@ -2,7 +2,9 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/cauakath/timeline-server/domain"
 	"github.com/cauakath/timeline-server/enum"
@@ -59,6 +61,59 @@ func (n *TimelineController) CreateTimeline(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusCreated).JSON(response)
 }
 
+func (n *TimelineController) UpdateTimeline(ctx *fiber.Ctx) error {
+	var timelineRequest model.Timeline
+	var response model.Response
+
+	id := ctx.Params("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	if err := ctx.BodyParser(&timelineRequest); err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	timeline, err := n.timelineUseCase.GetTimeline(idInt)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	fmt.Print("updating timeline" + strconv.Itoa(timeline.Id))
+
+	if err := n.timelineUseCase.UpdateTimeline(timelineRequest, idInt); err != nil {
+		response = model.Response{
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusInternalServerError).JSON(response)
+	}
+
+	response = model.Response{
+		StatusCode: http.StatusCreated,
+		Message:    "success",
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(response)
+}
+
 func VerifyRequest(timelineRequest model.Timeline, ctx *fiber.Ctx) error {
 	if timelineRequest.Title == "" {
 		return errors.New("title is required")
@@ -81,6 +136,48 @@ func VerifyRequest(timelineRequest model.Timeline, ctx *fiber.Ctx) error {
 	}
 
 	return nil
+}
+
+func (n *TimelineController) GetTimeline(ctx *fiber.Ctx) error {
+	var response model.Response
+	var id = ctx.Params("id")
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	timeline, err := n.timelineUseCase.GetTimeline(idInt)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusInternalServerError).JSON(response)
+	}
+
+	if timeline.Title == "" {
+		response = model.Response{
+			StatusCode: http.StatusNotFound,
+			Message:    "notFound",
+		}
+
+		return ctx.Status(http.StatusNotFound).JSON(response)
+	}
+
+	response = model.Response{
+		StatusCode: http.StatusOK,
+		Message:    "success",
+		Data:       timeline,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(response)
 }
 
 func (n *TimelineController) ListTimelines(ctx *fiber.Ctx) error {

@@ -11,6 +11,16 @@ type timelineUseCase struct {
 	timelineRepo domain.TimelineRepo
 }
 
+func (n *timelineUseCase) GetTimeline(timelineId int) (model.Timeline, error) {
+	timeline, err := n.timelineRepo.GetTimeline(timelineId)
+
+	if err != nil {
+		return model.Timeline{}, errors.New("failed to get timeline: " + err.Error())
+	}
+
+	return timeline, nil
+}
+
 func (n *timelineUseCase) ListTimelines() ([]model.Timeline, error) {
 	timelines, err := n.timelineRepo.ListTimelines()
 
@@ -26,6 +36,16 @@ func (n *timelineUseCase) CreateTimeline(createTimeline model.Timeline) error {
 
 	if err != nil {
 		return errors.New("failed to create timeline: " + err.Error())
+	}
+
+	return nil
+}
+
+func (n *timelineUseCase) UpdateTimeline(updateTimeline model.Timeline, timelineId int) error {
+	err := n.timelineRepo.UpdateTimeline(updateTimeline, timelineId)
+
+	if err != nil {
+		return errors.New("failed to update timeline: " + err.Error())
 	}
 
 	return nil
