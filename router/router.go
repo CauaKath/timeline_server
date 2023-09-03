@@ -14,6 +14,7 @@ func NewRouter(router *fiber.App, timelineController *controller.TimelineControl
 	router.Put("/timeline/:id", timelineController.UpdateTimeline)
 	router.Get("/timeline", timelineController.ListTimelines)
 	router.Get("/timeline/:id", timelineController.GetTimeline)
+	router.Delete("/timeline/:id", timelineController.DeleteTimeline)
 
 	return router
 }

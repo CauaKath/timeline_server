@@ -55,6 +55,16 @@ func (n *timelineRepo) UpdateTimeline(updateTimeline model.Timeline, timelineId 
 	return nil
 }
 
+func (n *timelineRepo) DeleteTimeline(timelineId int) error {
+	timeline := model.Timeline{Id: timelineId}
+
+	if err := n.db.Delete(&timeline).Error; err != nil {
+		return errors.New("failed to remove timeline")
+	}
+
+	return nil
+}
+
 func NewTimelineRepo(db *gorm.DB, rdb *redis.Client) domain.TimelineRepo {
 	return &timelineRepo{
 		db:  db,

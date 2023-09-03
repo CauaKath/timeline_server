@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -95,7 +94,14 @@ func (n *TimelineController) UpdateTimeline(ctx *fiber.Ctx) error {
 		return ctx.Status(http.StatusBadRequest).JSON(response)
 	}
 
-	fmt.Print("updating timeline" + strconv.Itoa(timeline.Id))
+	if timeline.Title == "" {
+		response = model.Response{
+			StatusCode: http.StatusNotFound,
+			Message:    "notFound",
+		}
+
+		return ctx.Status(http.StatusNotFound).JSON(response)
+	}
 
 	if err := n.timelineUseCase.UpdateTimeline(timelineRequest, idInt); err != nil {
 		response = model.Response{
@@ -197,6 +203,57 @@ func (n *TimelineController) ListTimelines(ctx *fiber.Ctx) error {
 		StatusCode: http.StatusOK,
 		Message:    "success",
 		Data:       timelines,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(response)
+}
+
+func (n *TimelineController) DeleteTimeline(ctx *fiber.Ctx) error {
+	var response model.Response
+	var id = ctx.Params("id")
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	timeline, err := n.timelineUseCase.GetTimeline(idInt)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusBadRequest).JSON(response)
+	}
+
+	if timeline.Title == "" {
+		response = model.Response{
+			StatusCode: http.StatusNotFound,
+			Message:    "notFound",
+		}
+
+		return ctx.Status(http.StatusNotFound).JSON(response)
+	}
+
+	err = n.timelineUseCase.DeleteTimeline(idInt)
+	if err != nil {
+		response = model.Response{
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+		}
+
+		return ctx.Status(http.StatusInternalServerError).JSON(response)
+	}
+
+	response = model.Response{
+		StatusCode: http.StatusOK,
+		Message:    "success",
 	}
 
 	return ctx.Status(http.StatusOK).JSON(response)

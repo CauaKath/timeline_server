@@ -51,6 +51,16 @@ func (n *timelineUseCase) UpdateTimeline(updateTimeline model.Timeline, timeline
 	return nil
 }
 
+func (n *timelineUseCase) DeleteTimeline(timelineId int) error {
+	err := n.timelineRepo.DeleteTimeline(timelineId)
+
+	if err != nil {
+		return errors.New("failed to delete timeline: " + err.Error())
+	}
+
+	return nil
+}
+
 func NewTimelineUseCase(timelineRepo domain.TimelineRepo) domain.TimelineUseCase {
 	return &timelineUseCase{
 		timelineRepo: timelineRepo,

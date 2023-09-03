@@ -7,6 +7,7 @@ type TimelineRepo interface {
 	UpdateTimeline(updateTimeline model.Timeline, timelineId int) error
 	GetTimeline(timelineId int) (model.Timeline, error)
 	ListTimelines() ([]model.Timeline, error)
+	DeleteTimeline(timelineId int) error
 }
 
 type TimelineUseCase interface {
@@ -14,4 +15,5 @@ type TimelineUseCase interface {
 	UpdateTimeline(updateTimeline model.Timeline, timelineId int) error
 	GetTimeline(timelineId int) (model.Timeline, error)
 	ListTimelines() ([]model.Timeline, error)
+	DeleteTimeline(timelineId int) error
 }
