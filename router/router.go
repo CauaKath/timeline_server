@@ -11,7 +11,9 @@ func NewRouter(router *fiber.App, timelineController *controller.TimelineControl
 	})
 
 	router.Post("/timeline", timelineController.CreateTimeline)
+	router.Put("/timeline/:id", timelineController.UpdateTimeline)
 	router.Get("/timeline", timelineController.ListTimelines)
+	router.Get("/timeline/:id", timelineController.GetTimeline)
 
 	return router
 }
