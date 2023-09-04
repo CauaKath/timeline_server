@@ -45,7 +45,7 @@ func startServer(db *gorm.DB, rdb *redis.Client) {
 	app.Use(cors.New())
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173",
+		AllowOrigins: "*",
 		AllowHeaders: "Origin, Content-Type, Accept, Access-Control-Allow-Origin",
 	}))
 
